@@ -40,8 +40,8 @@ async def main():
             if offer_id not in job_offers:
                 job_offers[offer_id] = title
 
-            for offer_id, title in job_offers.items():
-                print({"ID": offer_id, "title": title})
+            # for offer_id, title in job_offers.items():
+            #    print({"ID": offer_id, "title": title})
 
         # Printing our dictionary
         for key, value in job_offers.items():
