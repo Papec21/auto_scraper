@@ -26,22 +26,38 @@ async def main():
         await page.wait_for_load_state("networkidle")
         
         # Got problem with too long waiting time for title
-        count = await page.locator("[data-test=\"default-offer\"]").count()
+        # Scrolling whole page to make sure that everything is loaded
+        await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        await page.wait_for_timeout(1000)
+        await page.evaluate("window.scrollTo(0, 0)")
+        await page.wait_for_timeout(1000)
+        offers = await page.locator("[data-test=\"default-offer\"]").all()
 
         # Getting id and title of every job offer
-        for i in range(count):
-            offer = page.locator("[data-test=\"default-offer\"]").nth(i)
-            # Scroll down to prevent offers from not loading
-            await offer.scroll_into_view_if_needed()
-            offer_id = await offer.get_attribute("data-test-offerid")
-            title = await offer.locator("[data-test=\"link-offer-title\"]").inner_text()
-            
-            # If id not in the dict, it will update it
-            if offer_id not in job_offers:
-                job_offers[offer_id] = title
+        for offer in offers:
+            try:
+                # Scroll down to prevent offers from not loading
+                # Probably not really usefull now
+                await offer.scroll_into_view_if_needed()
 
-            # for offer_id, title in job_offers.items():
-            #    print({"ID": offer_id, "title": title})
+                # Getting offer id
+                offer_id = await offer.get_attribute("data-test-offerid")
+                if not offer_id:
+                    continue
+
+                # Getting offer title
+                # Timeout stops form hanging on one offer title
+                title = await offer.locator("[data-test=\"link-offer-title\"]").inner_text(timeout=3000)
+                if not title:
+                    continue
+
+                # If id not in the dict, it will update it
+                if offer_id not in job_offers:
+                    job_offers[offer_id] = title
+
+            except Exception as e:
+                print(f"Error on offer: {offer_id}")
+                continue
 
         # Printing our dictionary
         for key, value in job_offers.items():
