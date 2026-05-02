@@ -9,7 +9,7 @@ job_offers = {}
 async def main():
     async with async_playwright() as p:
         # Launching browser
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=True)
 
         # Waiting for our desired page to load
         page = await browser.new_page()
@@ -66,7 +66,7 @@ async def main():
 
         # Printing our dictionary
         for key, value in job_offers.items():
-            print(f"{key} | {value}")
+            print(f"{key} | {value[0]} | {value[1]}\n")
 
         await browser.close()
 
