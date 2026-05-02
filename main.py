@@ -47,13 +47,18 @@ async def main():
 
                 # Getting offer title
                 # Timeout stops form hanging on one offer title
-                title = await offer.locator("[data-test=\"link-offer-title\"]").inner_text(timeout=3000)
+                title = await offer.locator("[data-test=\"link-offer-title\"]").inner_text(timeout=1000)
                 if not title:
                     continue
 
+                # Getting offer link
+                offer_link = await offer.locator("a[data-test='link-offer']").get_attribute("href")
+                if not offer_link:
+                    continue 
+
                 # If id not in the dict, it will update it
                 if offer_id not in job_offers:
-                    job_offers[offer_id] = title
+                    job_offers[offer_id] = title, offer_link
 
             except Exception as e:
                 print(f"Error on offer: {offer_id}")
