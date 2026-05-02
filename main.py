@@ -9,7 +9,7 @@ job_offers = {}
 async def main():
     async with async_playwright() as p:
         # Launching browser
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=False)
 
         # Waiting for our desired page to load
         page = await browser.new_page()
@@ -17,8 +17,11 @@ async def main():
         await page.goto("https://it.pracuj.pl/praca/poznan;wp/ostatnich%2024h;p,1?rd=30&et=1%2C17%2C3")
 
         # Recorded sequence to pass cookies popup
-        await page.locator("[data-test=\"button-submitCookie\"]").click()
-        await page.get_by_role("button", name="Zamknij").click()
+        try:
+            await page.locator("[data-test=\"button-submitCookie\"]").click(timeout=3000)
+            await page.get_by_role("button", name="Zamknij").click(timeout=3000)
+        except Exception:
+            pass
 
         # Taking all default offers from page
         # Waiting for page to fully load
