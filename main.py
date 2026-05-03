@@ -18,8 +18,8 @@ async def main():
 
         # Recorded sequence to pass cookies popup
         try:
-            await page.locator("[data-test=\"button-submitCookie\"]").click(timeout=3000)
-            await page.get_by_role("button", name="Zamknij").click(timeout=3000)
+            await page.locator("[data-test=\"button-submitCookie\"]").click(timeout=1000)
+            await page.get_by_role("button", name="Zamknij").click(timeout=1000)
         except Exception:
             pass
 
@@ -61,7 +61,7 @@ async def main():
 
                 # If id not in the dict, it will update it
                 if offer_id not in job_offers:
-                    job_offers[offer_id] = title, offer_link
+                    job_offers[offer_id] = {"title": title, "url": offer_link}
 
             except Exception as e:
                 print(f"Error on offer: {offer_id}")
@@ -69,7 +69,7 @@ async def main():
 
         # Printing our dictionary
         for key, value in job_offers.items():
-            print(f"{key} | {value[0]} | {value[1]}\n")
+            print(f"{key} | {value["title"]} | {value["url"]}\n")
 
         await browser.close()
 
