@@ -2,6 +2,7 @@ import asyncio
 from playwright_stealth.stealth import Stealth
 from playwright.async_api import async_playwright
 
+# Mockup (well real actually) job offers to see if it works
 job_offers = {
     1004765163: {
         "title": "Supply Chain Consultant (SQL) k/m/*",
@@ -29,17 +30,41 @@ job_offers = {
     },
 }
 
-for key, value in job_offers.items():
-    print(value["url"])
+# Temporary place to store application success data
+application_sent = []
+
+# for key, value in job_offers.items():
+#     print(value["url"])
 
 async def applier():
     async with async_playwright() as playwright:
         applier_browser = await playwright.chromium.launch(headless=False)
 
-        offer_page = await applier_browser.new_page()
-        await Stealth().apply_stealth_async(offer_page)
-        await offer_page.goto(value["url"])
+        # Open every link and apply to job (not yet but in the future)
+        for link in job_offers:
+            offer_page = await applier_browser.new_page()
+            await Stealth().apply_stealth_async(offer_page)
 
+            key = job_offers[link]
+            url = key["url"]
+            print(url)
+            await offer_page.goto(url)
+
+            # Checking if apply button has link on himself
+            href = await offer_page.get_attribute("a[data-test=\"anchor-apply\"]", "href", timeout=1000)
+
+            # If link hides in button then we type False to note that application is not complete
+            # There's actually major problem with on pracujpl site short forms thats gonna be hard to overcome
+            if href:
+                application_sent.append(False)
+            # Else application is complete and we're good
+            else:
+                application_sent.append(True)
+
+            await offer_page.close()
+
+        print(application_sent)
+asyncio.run(applier())
 
 # https://login.pracuj.pl/
 # await page.fill("#email", "bartekdemczak@atomicmail.io")

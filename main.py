@@ -31,9 +31,9 @@ async def main():
         # Got problem with too long waiting time for title
         # Scrolling whole page to make sure that everything is loaded
         await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-        await page.wait_for_timeout(1000)
+        await page.wait_for_timeout(500)
         await page.evaluate("window.scrollTo(0, 0)")
-        await page.wait_for_timeout(1000)
+        await page.wait_for_timeout(500)
         offers = await page.locator("[data-test=\"default-offer\"]").all()
 
         # Getting id and title of every job offer
@@ -63,7 +63,7 @@ async def main():
                 if offer_id not in job_offers:
                     job_offers[offer_id] = {"title": title, "url": offer_link}
 
-            except Exception as e:
+            except Exception:
                 print(f"Error on offer: {offer_id}")
                 continue
 
